@@ -1,8 +1,8 @@
 
 import {join} from 'node:path';
 import * as fs from 'node:fs';
-import OBJECT_DATA from './data/objects.json' with {type: 'json'};
-import SPECTRAL_TYPE_DATA from './data/spectral_type_colors.json' with {type: 'json'};
+import OBJECT_DATA from '../data/objects.json' with {type: 'json'};
+import SPECTRAL_TYPE_DATA from '../data/spectral_type_colors.json' with {type: 'json'};
 import {PARSEC, round, Color} from './util.js';
 
 
@@ -96,7 +96,7 @@ for (let data of rawData) {
                     num = 0;
                 }
             }
-            rest = type.slice(1 + num.toString().length);
+            rest = type.slice(num.toString().length);
         }
         let value = SPECTRAL_TYPE_COLORS[cls as MainClass];
         let numeralMap = value?.[num];
@@ -125,7 +125,7 @@ for (let data of rawData) {
                 }
                 if (numeral && numeralMap[numeral]) {
                     color = numeralMap[numeral] as Color;
-                } else {
+                } else {numeral
                     missingTypes.add(originalType);
                     continue;
                 }
@@ -181,7 +181,7 @@ for (let data of rawData) {
     view.setUint8(index++, color[2]);
 }
 
-fs.writeFileSync(join(import.meta.dirname, 'data/objects'), view);
+fs.writeFileSync(join(import.meta.dirname, '../data/objects'), view);
 
 if (missingTypes.size > 0) {
     console.log(missingTypes.size, 'missing spectral types', Array.from(missingTypes));
