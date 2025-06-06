@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "lib",
+        "lib": ["ESNext", "DOM"],
+        "module": "NodeNext",
+        "resolveJsonModule": true,
+        "esModuleInterop": true
+    },
+    "files": ["src/index.ts", "src/build.ts", "src/loader.ts"]
+}

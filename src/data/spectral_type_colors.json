@@ -1,0 +1,532 @@
+{
+    "info": [
+        "Star color datafile",
+        "http://www.vendian.org/mncharity/dir3/starcolor/",
+        "Mitchell Charity <mcharity@lcs.mit.edu>",
+        "Version 2001-Jun-22",
+        "Processed and expanded by speedydelete"
+    ],
+    "O": {
+        "4": {
+            "I": "#b3a5ff",
+            "V": "#94a8ff"
+        },
+        "5": {
+            "I": "#b0a9ff",
+            "V": "#9bb0ff"
+        },
+        "6": {
+            "I": "#adadff",
+            "V": "#a2b8ff"
+        },
+        "7": {
+            "I": "#aab1ff",
+            "III": "#9eb1ff",
+            "V": "#9db1ff"
+        },
+        "8": {
+            "I": "#a7b5ff",
+            "II": "#91b8ff",
+            "III": "#9df2ff",
+            "IV": "#97b7ff",
+            "V": "#9df1ff"
+        },
+        "9": {
+            "I": "#a4b9ff",
+            "II": "#96baff",
+            "III": "#9ef1ff",
+            "IV": "#99b6ff",
+            "V": "#9ab2ff"
+        }
+    },
+    "B": {
+        "0": {
+            "I": "#a1bdff",
+            "II": "#9bbcff",
+            "III": "#9ef1ff",
+            "IV": "#9bb5ff",
+            "V": "#9cb2ff"
+        },
+        "1": {
+            "I": "#a8c1ff",
+            "II": "#a0beff",
+            "III": "#9eb1ff",
+            "IV": "#9db4ff",
+            "V": "#a0b6ff"
+        },
+        "2": {
+            "I": "#b1c4ff",
+            "II": "#a5c0ff",
+            "III": "#9fb4ff",
+            "IV": "#9fb3ff",
+            "V": "#a0b4ff"
+        },
+        "3": {
+            "I": "#afc2ff",
+            "II": "#aac2ff",
+            "III": "#a3bbff",
+            "IV": "#a6bcff",
+            "V": "#a5b9ff"
+        },
+        "4": {
+            "I": "#bbcbff",
+            "II": "#adc3ff",
+            "III": "#a6bcff",
+            "IV": "#adc5ff",
+            "V": "#a4b8ff"
+        },
+        "5": {
+            "I": "#b3caff",
+            "II": "#afc3ff",
+            "III": "#a8bdff",
+            "IV": "#aec4ff",
+            "V": "#aabfff"
+        },
+        "6": {
+            "I": "#bfcfff",
+            "II": "#b1c3ff",
+            "III": "#aabeff",
+            "IV": "#afc2ff",
+            "V": "#acbdff"
+        },
+        "7": {
+            "I": "#c3d1ff",
+            "II": "#b3c3ff",
+            "III": "#abbfff",
+            "IV": "#aabdff",
+            "V": "#adbfff"
+        },
+        "8": {
+            "I": "#b6ceff",
+            "II": "#b5c3ff",
+            "III": "#acc0ff",
+            "IV": "#afc1ff",
+            "V": "#b1c3ff"
+        },
+        "9": {
+            "I": "#ccd8ff",
+            "II": "#b7c3ff",
+            "III": "#b2c3ff",
+            "IV": "#b4c5ff",
+            "V": "#b5c6ff"
+        }
+    },
+    "A": {
+        "0": {
+            "I": "#bbceff",
+            "II": "#b9c3ff",
+            "III": "#bccdff",
+            "IV": "#b3c5ff",
+            "V": "#b9c9ff"
+        },
+        "1": {
+            "I": "#d6dfff",
+            "II": "#b1c0ff",
+            "III": "#bccdff",
+            "IV": "#b7c8ff",
+            "V": "#b5c7ff"
+        },
+        "2": {
+            "I": "#c7f6ff",
+            "II": "#aabdff",
+            "III": "#bdccff",
+            "IV": "#bbcbff",
+            "V": "#c7d6ff"
+        },
+        "3": {
+            "I": "#d3eeff",
+            "II": "#a2baff",
+            "III": "#bdcbff",
+            "IV": "#becdff",
+            "V": "#bfcfff"
+        },
+        "4": {
+            "I": "#d9eaff",
+            "II": "#9ab7ff",
+            "III": "#c4d1ff",
+            "IV": "#c3d2ff",
+            "V": "#c5d3ff"
+        },
+        "5": {
+            "I": "#dfe5ff",
+            "II": "#92b4ff",
+            "III": "#cad7ff",
+            "IV": "#d4dcff",
+            "V": "#cad7ff"
+        },
+        "6": {
+            "I": "#dbe2ff",
+            "II": "#8ab1ff",
+            "III": "#d1dbff",
+            "IV": "#cad6ff",
+            "V": "#c7d4ff"
+        },
+        "7": {
+            "I": "#d7dfff",
+            "II": "#97b9ff",
+            "III": "#d2dbff",
+            "IV": "#c0cfff",
+            "V": "#c8d5ff"
+        },
+        "8": {
+            "I": "#d3dcff",
+            "II": "#a4c1ff",
+            "III": "#d1dbff",
+            "IV": "#d0d9ff",
+            "V": "#d5deff"
+        },
+        "9": {
+            "I": "3cfdaff",
+            "II": "#b1c9ff",
+            "III": "#d1dbff",
+            "IV": "#e0e3ff",
+            "V": "#dbe0ff"
+        }
+    },
+    "F": {
+        "0": {
+            "I": "#cad7ff",
+            "II": "#cbd9ff",
+            "III": "#d5deff",
+            "IV": "#dae0ff",
+            "V": "#e0e5ff"
+        },
+        "1": {
+            "I": "#dfe5ff",
+            "II": "#d8e1ff",
+            "III": "#e3e8ff",
+            "IV": "#dfe3ff",
+            "V": "#e6eaff"
+        },
+        "2": {
+            "I": "#f4f3ff",
+            "II": "#e5e9ff",
+            "III": "f1f1ff",
+            "IV": "#e3e6ff",
+            "V": "#ecefff"
+        },
+        "3": {
+            "I": "#e8eaff",
+            "II": "#f2f1ff",
+            "III": "#f1f1ff",
+            "IV": "#e3e6ff",
+            "V": "#e6e9ff"
+        },
+        "4": {
+            "I": "#e2e6ff",
+            "II": "#f3f1fb",
+            "III": "#f1f0ff",
+            "IV": "#eaebff",
+            "V" :"#e0e2ff"
+        },
+        "5": {
+            "I": "#dbe1ff",
+            "II": "#f4f0f7",
+            "III": "#f2f0ff",
+            "IV": "#f1efff",
+            "V": "#f8f7ff"
+        },
+        "6": {
+            "I": "#edeffb",
+            "II": "#f5f0f3",
+            "III": "#f1f0ff",
+            "IV": "#f1efff",
+            "V": "#f4f1ff"
+        },
+        "7": {
+            "I": "#f6f6f9",
+            "II": "#f6efee",
+            "III": "#f1f0ff",
+            "IV": "#f0efff",
+            "V": "#f6f3ff"
+        },
+        "8": {
+            "I": "#fffcf7",
+            "II": "#f8efea",
+            "III": "#f8f1f4",
+            "IV": "#fffcfd",
+            "V": "fff7fc"
+        },
+        "9": {
+            "I": "#fff6e9",
+            "II": "#f9eee6",
+            "III": "#fff2e9",
+            "IV": "#fffaf9",
+            "V": "#fff7fc"
+        }
+    },
+    "G": {
+        "0": {
+            "I": "#ffefdb",
+            "II": "#faeee2",
+            "III": "#fff2e9",
+            "IV": "#fff8f5",
+            "V": "#fff8fc"
+        },
+        "1": {
+            "I": "#ffeed4",
+            "II": "#fbeddd",
+            "III": "#fff3e9",
+            "IV": "#fff6f4",
+            "V": "#fff7f8"
+        },
+        "2": {
+            "I": "#ffeccd",
+            "II": "#fcedd9",
+            "III": "#fff3e9",
+            "IV": "#fff4f2",
+            "V": "#fff5f2"
+        },
+        "3": {
+            "I": "#ffe7cb",
+            "II": "#fdecd4",
+            "III": "#fff3e9",
+            "IV": "#ffeee2",
+            "V": "#fff3ec"
+        },
+        "4": {
+            "I": "#ffe7c1",
+            "II": "#feecd0",
+            "III": "#fff3e9",
+            "IV": "#fff5ee",
+            "V": "#fff1e5"
+        },
+        "5": {
+            "I": "#ffe6b7",
+            "II" :"#ffebcb",
+            "III": "#ffecd3",
+            "IV": "#fff4ec",
+            "V": "#fff3e8"
+        },
+        "6": {
+            "I": "#ffe1af",
+            "II": "#ffe9c6",
+            "III": "#ffecd7",
+            "IV": "#fff2ea",
+            "V": "#fff4eb"
+        },
+        "7": {
+            "I": "#ffdfab",
+            "II": "#ffe8c2",
+            "III": "#ffeacf",
+            "IV": "#ffe7cd",
+            "V": "#fff4eb"
+        },
+        "8": {
+            "I": "#ffdca7",
+            "II": "#ffe6bd",
+            "III": "#ffe7c7",
+            "IV": "#ffe9d3",
+            "V": "#ffedde"
+        },
+        "9": {
+            "I": "#ffddae",
+            "II": "#ffe4b8",
+            "III": "#ffe7c4",
+            "IV": "#ffe5c8",
+            "V": "#ffefdd"
+        }
+    },
+    "K": {
+        "0": {
+            "I": "#ffddb5",
+            "II": "#ffe2b4",
+            "III": "#ffe3be",
+            "IV": "#ffe1bd",
+            "V": "#ffeedd"
+        },
+        "1": {
+            "I": "#ffdcb1",
+            "II": "#ffe0af",
+            "III": "#ffdfb5",
+            "IV": "#ffd8ab",
+            "V": "#ffe0bc"
+        },
+        "2": {
+            "I": "#ffd387",
+            "II": "#ffdfac",
+            "III": "#ffddaf",
+            "IV": "#ffe5ca",
+            "V": "#ffe3c4"
+        },
+        "3": {
+            "I": "#ffcc80",
+            "II": "#ffdda9",
+            "III": "#ffd8a7",
+            "IV": "#ffdba7",
+            "V": "#ffdec3"
+        },
+        "4": {
+            "I": "#ffc976",
+            "II": "#ffdca6",
+            "III": "#ffd392",
+            "IV": "#ffdba8",
+            "V": "#ffd8b5"
+        },
+        "5": {
+            "I": "#ffd19a",
+            "II": "#ffdba3",
+            "III": "#ffcc8a",
+            "IV": "#ffdaa9",
+            "V": "#ffd2a1"
+        },
+        "6": {
+            "I": "#ffd199",
+            "II": "#ffdaa0",
+            "III": "#ffce8c",
+            "V": "#ffcd98"
+        },
+        "7": {
+            "I": "#ffd098",
+            "II": "#ffd89c",
+            "III": "#ffd08e",
+            "V": "#ffc78e"
+        },
+        "8": {
+            "I": "#ffcf95",
+            "II": "#ffd593",
+            "III": "#ffce8b",
+            "V": "#ffd1ae"
+        },
+        "9": {
+            "I": "#ffce92",
+            "II": "#ffd18a",
+            "III": "#ffcd88",
+            "V": "#ffca9d"
+        }
+    },
+    "M": {
+        "0": {
+            "I": "#ffcc8f",
+            "II": "#ffcf86",
+            "III": "#ffcb84",
+            "V": "#ffc38b"
+        },
+        "1": {
+            "I": "#ffca8a",
+            "II": "#ffcd81",
+            "III": "#ffc879",
+            "V": "#ffcc8e"
+        },
+        "2": {
+            "I": "#ffc168",
+            "II": "#ffcb7c",
+            "III": "#ffc676",
+            "V": "#ffc483"
+        },
+        "3": {
+            "I": "#ffc076",
+            "II": "#ffc977",
+            "III": "#ffc877",
+            "V": "#ffce81"
+        },
+        "4": {
+            "I": "#ffb968",
+            "II": "#ffc773",
+            "III": "#ffce7f",
+            "V": "#ffc97f"
+        },
+        "5": {
+            "I": "#ffb25a",
+            "II": "#ffc56e",
+            "III": "#ffc57c",
+            "V": "#ffcc6f"
+        },
+        "6": {
+            "I": "#ffab4c",
+            "II": "#ffc369",
+            "III": "#ffb279",
+            "V": "#ffc370"
+        },
+        "7": {
+            "I": "#ffa43e",
+            "II": "#ffc164",
+            "III": "#ffa561",
+            "V": "#ffc56f"
+        },
+        "8": {
+            "I": "#ff9d30",
+            "II": "#ffbf5f",
+            "III": "#ffa761",
+            "V": "#ffc66d"
+        },
+        "9": {
+            "I": "#ff9622",
+            "II": "#ffbd5a",
+            "III": "#ffe99a",
+            "V": "#ffc76b"
+        }
+    },
+    "C": "#ff9e40",
+    "WN": {
+        "0": "#8ec4ff",
+        "1": "#97c4ff",
+        "2": "#a0c4ff",
+        "3": "#a9c4ff",
+        "4": "#b2c4ff",
+        "5": "#bbc4ff",
+        "6": "#c4c4ff",
+        "7": "#e2ced1",
+        "8": "#f1d3ba",
+        "9": "#ffd8a3"
+    },
+    "WC": {
+        "1": "#ffa800",
+        "2": "#ffad20",
+        "3": "#ffb23f",
+        "4": "#ffb75f",
+        "5": "#ffbc7e",
+        "6": "#f6c1a9",
+        "7": "#eec6d4",
+        "8": "#e5cbff",
+        "9": "#dcd0ff"
+    },
+    "S": {
+        "0": "#ffc574",
+        "1": "#ffc574",
+        "2": "#ffc574",
+        "3": "#ffc574",
+        "4": "#ffc574",
+        "5": "#ffbd79",
+        "6": "#c59aac",
+        "7": "#b18ebc",
+        "8": "#8a77de",
+        "9": "#635fff"
+    },
+    "N": {
+        "0": "#ffa736",
+        "1": "#ffa134",
+        "2": "#ff9b31",
+        "3": "#ff952f",
+        "4": "#ff8f2c",
+        "5": "#ff942e",
+        "6": "#ff9931",
+        "7": "#ff9d33",
+        "8": "#ff9f34",
+        "9": "#ffa135"
+    },
+    "R": {
+        "0": "#ffecd5",
+        "1": "#ffe3c3",
+        "2": "#ffdab0",
+        "3": "#ffce97",
+        "4": "#ffc88b",
+        "5": "#ffc27e",
+        "6": "#ffb769",
+        "7": "#ffad55",
+        "8": "#ffa240",
+        "9": "#ff972b"
+    },
+    "D": {
+        "0": "#9bb2ff",
+        "1": "#9fb5ff",
+        "2": "#a8bdff",
+        "3": "#b3c5ff",
+        "4": "#c0cfff",
+        "5": "#cfdaff",
+        "6": "#e0e6ff",
+        "7": "#f3f3ff",
+        "8": "#fff7f5",
+        "9": "#ffefe1"
+    }
+}

@@ -1,0 +1,29 @@
+
+-- objects.json
+
+SELECT TOP 1000
+    basic.oid,
+    basic.main_id,
+    basic.otype,
+    basic.ra,
+    basic.dec,
+    basic.pmra,
+    basic.pmdec,
+    basic.rvz_radvel,
+    basic.plx_value,
+    basic.sp_type,
+    basic.morph_type,
+    allfluxes.V AS mag
+FROM basic
+LEFT JOIN allfluxes ON basic.oid = allfluxes.oidref
+WHERE allfluxes.V IS NOT NULL
+ORDER BY mag ASC
+
+-- names.json
+
+SELECT TOP 1000 basic.oid, ids.ids, allfluxes.V as mag
+FROM basic
+LEFT JOIN allfluxes ON basic.oid = allfluxes.oidref
+LEFT JOIN ids ON basic.oid = ids.oidref
+WHERE allfluxes.V IS NOT NULL
+ORDER BY mag ASC

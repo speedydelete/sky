@@ -1,0 +1,25 @@
+{
+  "name": "sky",
+  "version": "0.1.0",
+  "description": "Sky map",
+  "license": "GPL-3.0-only",
+  "author": "speedydelete",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "tsc && node lib/build.js",
+    "load-objects": "tsc && node lib/loader.js"
+  },
+  "homepage": "https://github.com/speedydelete/sky#readme",
+  "bugs": {
+    "url": "https://github.com/speedydelete/sky/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/speedydelete/sky.git"
+  },
+  "dependencies": {
+    "@types/node": "^22.15.30",
+    "typescript": "^5.8.3"
+  }
+}
