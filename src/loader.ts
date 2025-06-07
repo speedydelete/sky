@@ -49,7 +49,7 @@ for (let key of ['WN', 'WC', 'S', 'N', 'R', 'D'] as const) {
 function setString(view: DataView, index: number, str: string): number {
     view.setUint8(index++, str.length);
     for (let i = 0; i < str.length; i++) {
-        view.setUint8(index++, str.length);
+        view.setUint8(index++, str.charCodeAt(i));
     }
     return index;
 }
@@ -174,6 +174,7 @@ for (let data of rawData) {
         index += 4;
     }
     view.setFloat32(index, PARSEC / data[8]);
+    index += 4;
     view.setFloat32(index, data[11]);
     index += 4;
     view.setUint8(index++, color[0]);
@@ -181,7 +182,7 @@ for (let data of rawData) {
     view.setUint8(index++, color[2]);
 }
 
-fs.writeFileSync(join(import.meta.dirname, '../data/objects'), view);
+fs.writeFileSync(join(import.meta.dirname, '../dist/objects'), view);
 
 if (missingTypes.size > 0) {
     console.log(missingTypes.size, 'missing spectral types', Array.from(missingTypes));
