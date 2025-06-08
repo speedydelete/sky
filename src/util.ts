@@ -29,7 +29,7 @@ export const LY = 9460730472580800;
 export const PARSEC = 648000 * AU / PI;
 
 
-export const GREEK_LETTERS = {'alf': 'α', 'bet': 'β', 'gam': 'γ', 'del': 'δ', 'eps': 'ε', 'zet': 'ζ', 'eta': 'η', 'tet': 'θ', 'iot': 'ι', 'kap': 'κ', 'lam': 'λ', 'mu.': 'µ', 'nu.': 'ν ', 'ksi': 'ξ', 'omi': 'o', 'pi.': 'π', 'rho': 'ρ', 'sig': 'σ', 'tau': 'τ', 'ups': 'υ', 'phi': 'φ', 'khi': 'χ', 'psi': 'ψ', 'ome': 'ω'};
+export const GREEK_LETTERS: {[key: string]: string} = {'alf': 'α', 'bet': 'β', 'gam': 'γ', 'del': 'δ', 'eps': 'ε', 'zet': 'ζ', 'eta': 'η', 'tet': 'θ', 'iot': 'ι', 'kap': 'κ', 'lam': 'λ', 'mu.': 'µ', 'nu.': 'ν ', 'ksi': 'ξ', 'omi': 'o', 'pi.': 'π', 'rho': 'ρ', 'sig': 'σ', 'tau': 'τ', 'ups': 'υ', 'phi': 'φ', 'khi': 'χ', 'psi': 'ψ', 'ome': 'ω'};
 
 export const CONSTELLATIONS = {
     'Andromeda': ['Andromedae', 'And'],
@@ -45,8 +45,8 @@ export const CONSTELLATIONS = {
     'Camelopardus': ['Camelopardalis', 'Cam'],
     'Cancer': ['Cancer', 'Cnc'],
     'Canes Venatici': ['Canum Venaticorum', 'CVn'],
-    'Canis Major': ['Can Majoris', 'CMa'],
-    'Canis Minor': ['Can Minoris', 'CMi'],
+    'Canis Major': ['Canis Majoris', 'CMa'],
+    'Canis Minor': ['Canis Minoris', 'CMi'],
     'Capricornus': ['Capricorni', 'Cap'],
     'Carina': ['Carinae', 'Car'],
     'Cassiopeia': ['Cassiopeiae', 'Cas'],
@@ -100,7 +100,7 @@ export const CONSTELLATIONS = {
     'Pices': ['Piscium', 'Psc'],
     'Piscis Austrinus': ['Piscis Austrini', 'PsA'],
     'Puppis': ['Puppi', 'Pup'],
-    'Pyxis (=Malus)': ['Pyxidis', 'Pyx'],
+    'Pyxis': ['Pyxidis', 'Pyx'],
     'Reticulum': ['Reticuli', 'Ret'],
     'Sagitta': ['Sagittae', 'Sge'],
     'Sagittarius': ['Sagittarii', 'Sgr'],

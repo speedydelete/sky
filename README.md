@@ -13,3 +13,5 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 The file "data/constellation_borders.txt" contains data from Stellarium (https://github.com/Stellarium/stellarium).
+
+The GNU General Public License does not apply to the file "data/star_names.csv". This file is from https://www.datastro.eu/explore/dataset/list-of-iau-approved-star-names-as-of-24112016. It is licensed under the Creative Commons Attribution 4.0 International license (https://creativecommons.org/licenses/by/4.0/).

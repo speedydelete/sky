@@ -1,7 +1,7 @@
 
 import * as fs from 'node:fs';
 import SPECTRAL_TYPE_DATA from '../data/spectral_type_colors.json' with {type: 'json'};
-import {PARSEC, round, Color} from './util.js';
+import {PARSEC, round, Color, GREEK_LETTERS, CONSTELLATIONS} from './util.js';
 
 
 function parseColor(color: string): Color {
@@ -77,7 +77,7 @@ function getSpectralTypeColor(type: string): [number, number, number] | null {
             rest = type.slice(num.toString().length);
         }
         let value = SPECTRAL_TYPE_COLORS[cls as MainClass];
-        let numeralMap = value?.[num];
+        let numeralMap = value?.[num as Subclass];
         if (numeralMap) {
             while (rest[0] !== 'I' && rest[0] !== 'V' && rest.length > 0) {
                 rest = rest.slice(1);
@@ -112,8 +112,11 @@ function getSpectralTypeColor(type: string): [number, number, number] | null {
             num = 5;
         }
         let value = SPECTRAL_TYPE_COLORS[(cls + type[1]) as 'WN' | 'WC'];
-        if (value && value[num]) {
-            return value[num];
+        if (value) {
+            let out = value[num];
+            if (out) {
+                return out;
+            }
         }
     } else if (type.startsWith('SN')) {
         return [0xa9, 0xc4, 0xff];
@@ -123,8 +126,11 @@ function getSpectralTypeColor(type: string): [number, number, number] | null {
             num = 5;
         }
         let value = SPECTRAL_TYPE_COLORS[cls];
-        if (value && value[num]) {
-            return value[num];
+        if (value) {
+            let out = value[num];
+            if (out) {
+                return out;
+            }
         }
     } else if (cls === 'C' && SPECTRAL_TYPE_COLORS['C']) {
         return SPECTRAL_TYPE_COLORS['C'];
@@ -134,17 +140,37 @@ function getSpectralTypeColor(type: string): [number, number, number] | null {
 }
 
 
-function setString(view: DataView, index: number, str: string): number {
-    view.setUint8(index++, str.length);
-    for (let i = 0; i < str.length; i++) {
-        view.setUint8(index++, str.charCodeAt(i));
+const GENITIVE_LOOKUP = Object.fromEntries(Object.values(CONSTELLATIONS).map(value => [value[1], value[0]]));
+
+const STAR_NAMES = new Map(fs.readFileSync('data/star_names.csv').toString().split('\n').map(row => row.split(';')).map(row => [row[2] + ' ' + GENITIVE_LOOKUP[row[3]], row[0]]));
+
+function getName(name: string): string {
+    while (name.includes('  ')) {
+        name = name.replaceAll('  ', ' ');
     }
-    return index;
+    if (name.startsWith('NAME')) {
+        return name.slice(5);
+    } else if (name.startsWith('*')) {
+        let data = name.slice(2).split(' ');
+        let cnst = GENITIVE_LOOKUP[data[1]];
+        let letter = data[0].slice(0, 3);
+        let out = letter in GREEK_LETTERS ? GREEK_LETTERS[letter] : data[0];
+        out += ' ' + cnst + (data[2] ? ' ' + data[2] : '');
+        if (STAR_NAMES.has(out) && !data[2]) {
+            return STAR_NAMES.get(out) + ' (' + out + ')';
+        }
+        return out;
+    } else {
+        return name;
+    }
 }
 
 let license = fs.readFileSync('data/objects.json.LICENSE.txt').toString();
 
 let rawData = JSON.parse(fs.readFileSync('data/objects.json').toString()) as [number, string, string, number, number, number, number, number, number, string | null, string | null, number][];
+
+const encoder = new TextEncoder();
+const encode: TextEncoder['encode'] = encoder.encode.bind(encoder);
 
 let out: ArrayBuffer[] = [];
 for (let data of rawData) {
@@ -155,7 +181,8 @@ for (let data of rawData) {
     if (color === null) {
         continue;
     }
-    let buffer = new ArrayBuffer(37 + data[1].length + data[2].length);
+    let name = encode(getName(data[1]));
+    let buffer = new ArrayBuffer(36 + name.length);
     let view = new DataView(buffer);
     view.setUint32(0, data[0]);
     view.setFloat32(4, data[3]);
@@ -168,8 +195,10 @@ for (let data of rawData) {
     view.setUint8(32, color[0]);
     view.setUint8(33, color[1]);
     view.setUint8(34, color[2]);
-    let index = setString(view, 35, data[1]);
-    setString(view, index, data[2]);
+    view.setUint8(35, name.length);
+    for (let i = 0; i < name.length; i++) {
+        view.setUint8(36 + i, name[i]);
+    }
     out.push(buffer);
 }
 

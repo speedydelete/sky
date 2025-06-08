@@ -5,7 +5,6 @@ import {Color, PI, max, min, round, sin, cos, acos, atan2, query, format, normal
 interface Obj {
     id: number;
     name: string;
-    type: string;
     ra: number;
     dec: number;
     pmRa: number;
@@ -16,49 +15,36 @@ interface Obj {
     color: Color;
 }
 
-function getString(view: DataView, index: number): [string, number] {
-    let length = view.getUint8(index++);
-    let out = '';
-    for (let i = 0; i < length; i++) {
-        out += String.fromCharCode(view.getUint8(index++));
-    }
-    return [out, index];
-}
 
-
-async function loadObjects(path: string): Promise<Obj[]> {
-    let buffer = await (await fetch(path)).arrayBuffer();
-    let objects: Obj[] = [];
-    let view = new DataView(buffer);
-    let index = 0;
-    while (view.getUint8(index) !== 0) {
-        index++;
-    }
+let buffer = await (await fetch('objects')).arrayBuffer();
+let objects: Obj[] = [];
+let view = new DataView(buffer);
+let index = 0;
+while (view.getUint8(index) !== 0) {
     index++;
-    let length = view.getUint32(index);
-    index += 4;
-    while (objects.length < length) {
-        let id = view.getUint32(index);
-        let ra = view.getFloat32(index + 4);
-        let dec = view.getFloat32(index + 8);
-        let pmRa = view.getFloat32(index + 12);
-        let pmDec = view.getFloat32(index + 16);
-        let rvel = view.getFloat32(index + 20);
-        let dist = view.getFloat32(index + 24);
-        let mag = view.getFloat32(index + 28);
-        let r = view.getUint8(index + 32);
-        let g = view.getUint8(index + 33);
-        let b = view.getUint8(index + 34);
-        let name: string, type: string;
-        [name, index] = getString(view, index + 35);
-        [name, index] = getString(view, index);
-        objects.push({id, name, type, ra, dec, pmRa, pmDec, rvel, dist, mag, color: [r, g, b]});
-    }
-    console.log(objects);
-    return objects;
 }
-
-let objects = await loadObjects('objects');
+let length = view.getUint32(++index);
+index += 4;
+while (objects.length < length) {
+    let id = view.getUint32(index);
+    let ra = view.getFloat32(index + 4);
+    let dec = view.getFloat32(index + 8);
+    let pmRa = view.getFloat32(index + 12);
+    let pmDec = view.getFloat32(index + 16);
+    let rvel = view.getFloat32(index + 20);
+    let dist = view.getFloat32(index + 24);
+    let mag = view.getFloat32(index + 28);
+    let r = view.getUint8(index + 32);
+    let g = view.getUint8(index + 33);
+    let b = view.getUint8(index + 34);
+    let length = view.getUint8(index + 35);
+    let name = '';
+    for (let i = 0; i < length; i++) {
+        name += String.fromCharCode(view.getUint8(index++));
+    }
+    index = index + 36 + name.length;
+    objects.push({id, name, ra, dec, pmRa, pmDec, rvel, dist, mag, color: [r, g, b]});
+}
 
 
 let width = window.innerWidth;

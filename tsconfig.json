@@ -4,6 +4,7 @@
         "outDir": "lib",
         "lib": ["ESNext", "DOM"],
         "module": "NodeNext",
+        "strict": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "sourceMap": true
