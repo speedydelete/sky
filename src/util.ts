@@ -1,16 +1,6 @@
 
 export type Color = [number, number, number];
 
-
-export function query<T extends HTMLElement>(query: string): T {
-    let out = document.querySelector(query);
-    if (!out) {
-        throw new Error(`Missing query: '${query}'`);
-    }
-    return out as T;
-}
-
-
 export const {E, LN10, LN2, LOG10E, LOG2E, PI, SQRT1_2, SQRT2, abs, cbrt, ceil, clz32, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, sign, sqrt} = globalThis.Math;
 export const DTR = PI / 180;
 export const sin = (x: number) => globalThis.Math.sin(x * DTR);
@@ -37,6 +27,34 @@ export const SBC = (PI**2 * KB**4) / (60 * HBAR**3 * C**2);
 export const AU = 149597870700;
 export const LY = 9460730472580800;
 export const PARSEC = 648000 * AU / PI;
+
+
+export const GREEK_LETTERS = {
+    'alf': 'α',
+    'bet': 'β',
+    'gam': 'γ',
+    'del': 'δ',
+    'eps': 'ε',
+    'zet': 'ζ',
+    'eta': 'η',
+    'tet': 'θ',
+    'iot': 'ι',
+    'kap': 'κ',
+    'lam': 'λ',
+    'mu.': 'µ',
+    'nu.': 'ν ',
+    'ksi': 'ξ',
+    'omi': 'o',
+    'pi.': 'π',
+    'rho': 'ρ',
+    'sig': 'σ',
+    'tau': 'τ',
+    'ups': 'υ',
+    'phi': 'φ',
+    'khi': 'χ',
+    'psi': 'ψ',
+    'ome': 'ω',
+};
 
 
 export function toJD(time: number): number {
@@ -67,6 +85,19 @@ export function normalizeDec(dec: number): number {
     } else {
         return dec;
     }
+}
+
+
+export function query<T extends HTMLElement>(query: string): T {
+    let out = document.querySelector(query);
+    if (!out) {
+        throw new Error(`Missing query: '${query}'`);
+    }
+    return out as T;
+}
+
+export function format(value: number, digits: number = 0, length: number = 0) {
+    return value.toFixed(digits).padStart(length, '0');
 }
 
 

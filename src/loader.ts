@@ -1,7 +1,5 @@
 
-import {join} from 'node:path';
 import * as fs from 'node:fs';
-import OBJECT_DATA from '../data/objects.json' with {type: 'json'};
 import SPECTRAL_TYPE_DATA from '../data/spectral_type_colors.json' with {type: 'json'};
 import {PARSEC, round, Color} from './util.js';
 
@@ -46,29 +44,9 @@ for (let key of ['WN', 'WC', 'S', 'N', 'R', 'D'] as const) {
 }
 
 
-function setString(view: DataView, index: number, str: string): number {
-    view.setUint8(index++, str.length);
-    for (let i = 0; i < str.length; i++) {
-        view.setUint8(index++, str.charCodeAt(i));
-    }
-    return index;
-}
-
-
 let missingTypes = new Set<string>();
 
-let rawData = (OBJECT_DATA as unknown as {data: [number, string, string, number, number, number, number, number, number, string | null, string | null, number][]}).data;
-
-let out = new ArrayBuffer(rawData.length * 35 + rawData.map(data => 2 + data[1].length + data[2].length).reduce((x, y) => x + y));
-let view = new DataView(out);
-let index = 0;
-
-for (let data of rawData) {
-    let type = data[9];
-    if (type === null) {
-        continue;
-    }
-    let color: Color;
+function getSpectralTypeColor(type: string): [number, number, number] | null {
     let cls = type[0];
     let originalType = type;
     while (!'OBAFGKMWSNRDC'.includes(cls) && type.length > 0) {
@@ -105,7 +83,7 @@ for (let data of rawData) {
                 rest = rest.slice(1);
             }
             if (rest.length === 0 && numeralMap['V']) {
-                color = numeralMap['V'];
+                return numeralMap['V'];
             } else {
                 let numeral: Numeral | null = null;
                 if (rest[0] === 'I') {
@@ -124,15 +102,9 @@ for (let data of rawData) {
                     numeral = 'V';
                 }
                 if (numeral && numeralMap[numeral]) {
-                    color = numeralMap[numeral] as Color;
-                } else {numeral
-                    missingTypes.add(originalType);
-                    continue;
+                    return numeralMap[numeral] as Color;
                 }
             }
-        } else {
-            missingTypes.add(originalType);
-            continue;
         }
     } else if (cls === 'W' && (type[1] === 'N' || type[1] === 'C')) {
         let num = parseInt(type[2]) as Subclass;
@@ -141,13 +113,10 @@ for (let data of rawData) {
         }
         let value = SPECTRAL_TYPE_COLORS[(cls + type[1]) as 'WN' | 'WC'];
         if (value && value[num]) {
-            color = value[num];
-        } else {
-            missingTypes.add(originalType);
-            continue;
+            return value[num];
         }
     } else if (type.startsWith('SN')) {
-        color = [0xa9, 0xc4, 0xff];
+        return [0xa9, 0xc4, 0xff];
     } else if (cls === 'S' || cls === 'N' || cls === 'R' || cls === 'D') {
         let num = parseInt(type[1]) as Subclass;
         if (Number.isNaN(num)) {
@@ -155,34 +124,72 @@ for (let data of rawData) {
         }
         let value = SPECTRAL_TYPE_COLORS[cls];
         if (value && value[num]) {
-            color = value[num];
-        } else {
-            missingTypes.add(originalType);
-            continue;
+            return value[num];
         }
     } else if (cls === 'C' && SPECTRAL_TYPE_COLORS['C']) {
-        color = SPECTRAL_TYPE_COLORS['C'];
-    } else {
-        missingTypes.add(originalType);
-        continue;
+        return SPECTRAL_TYPE_COLORS['C'];
     }
-    view.setUint32(index, data[0]);
-    index = setString(view, index + 4, data[1]);
-    index = setString(view, index, data[2]);
-    for (let i = 3; i < 8; i++) {
-        view.setFloat32(index, data[i as 3 | 4 | 5 | 6 | 7]);
-        index += 4;
-    }
-    view.setFloat32(index, PARSEC / data[8]);
-    index += 4;
-    view.setFloat32(index, data[11]);
-    index += 4;
-    view.setUint8(index++, color[0]);
-    view.setUint8(index++, color[1]);
-    view.setUint8(index++, color[2]);
+    missingTypes.add(originalType);
+    return null;
 }
 
-fs.writeFileSync(join(import.meta.dirname, '../dist/objects'), view);
+
+function setString(view: DataView, index: number, str: string): number {
+    view.setUint8(index++, str.length);
+    for (let i = 0; i < str.length; i++) {
+        view.setUint8(index++, str.charCodeAt(i));
+    }
+    return index;
+}
+
+let license = fs.readFileSync('data/objects.json.LICENSE.txt').toString();
+
+let rawData = JSON.parse(fs.readFileSync('data/objects.json').toString()) as [number, string, string, number, number, number, number, number, number, string | null, string | null, number][];
+
+let out: ArrayBuffer[] = [];
+for (let data of rawData) {
+    if (data[9] === null) {
+        continue;
+    }
+    let color = getSpectralTypeColor(data[9]);
+    if (color === null) {
+        continue;
+    }
+    let buffer = new ArrayBuffer(37 + data[1].length + data[2].length);
+    let view = new DataView(buffer);
+    view.setUint32(0, data[0]);
+    view.setFloat32(4, data[3]);
+    view.setFloat32(8, data[4]);
+    view.setFloat32(12, data[5]);
+    view.setFloat32(16, data[6]);
+    view.setFloat32(20, data[7]);
+    view.setFloat32(24, PARSEC / data[8]);
+    view.setFloat32(28, data[11]);
+    view.setUint8(32, color[0]);
+    view.setUint8(33, color[1]);
+    view.setUint8(34, color[2]);
+    let index = setString(view, 35, data[1]);
+    setString(view, index, data[2]);
+    out.push(buffer);
+}
+
+let view = new DataView(new ArrayBuffer(out.reduce((x, y) => x + y.byteLength, 0) + 5 + license.length));
+
+for (let i = 0; i < license.length; i++) {
+    view.setUint8(i, license.charCodeAt(i));
+}
+
+view.setUint8(license.length, 0);
+view.setUint32(license.length + 1, out.length);
+
+let index = license.length + 5;
+for (let buffer of out) {
+    for (let byte of new Uint8Array(buffer)) {
+        view.setUint8(index++, byte);
+    }
+}
+
+fs.writeFileSync('dist/objects', view);
 
 if (missingTypes.size > 0) {
     console.log(missingTypes.size, 'missing spectral types', Array.from(missingTypes));

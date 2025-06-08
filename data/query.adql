@@ -1,7 +1,7 @@
 
--- objects.json
+-- objects --
 
-SELECT TOP 1000
+SELECT TOP 100000
     basic.oid,
     basic.main_id,
     basic.otype,
@@ -19,7 +19,19 @@ LEFT JOIN allfluxes ON basic.oid = allfluxes.oidref
 WHERE allfluxes.V IS NOT NULL
 ORDER BY mag ASC
 
--- names.json
+-- find xth magnitude --
+
+SELECT TOP 1 *
+FROM (
+    SELECT TOP 1000 allfluxes.V AS mag
+    FROM basic
+    LEFT JOIN allfluxes ON basic.oid = allfluxes.oidref
+    WHERE allfluxes.V IS NOT NULL
+    ORDER BY allfluxes.V ASC, basic.oid ASC
+) AS sub
+ORDER BY mag DESC, oid DESC
+
+-- names --
 
 SELECT TOP 1000 basic.oid, ids.ids, allfluxes.V as mag
 FROM basic

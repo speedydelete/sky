@@ -3,22 +3,51 @@
     <head>
         <title>Sky</title>
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>
 
-html, body, canvas {
+body {
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+}
+
+canvas {
     position: absolute;
     top: 0;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+}
+
+#bottom {
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    margin: 0;
-    padding: 0;
+    height: 30px;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    background-color: #3f3f3f;
+    color: white;
 }
 
         </style>
     </head>
     <body>
-        <canvas id="main"></canvas>
+        <canvas id="main">Your browser does not support the canvas element. This is required to run this program.</canvas>
+        <div id="bottom">
+            <noscript>You need JavaScript to run this program</noscript>
+            <span id="target">Earth</span>
+            <div>RA: <span id="ra"></span></div>
+            <div>Dec: <span id="dec"></span></div>
+        </div>
+        <button id="info-button">Info</button>
+        <div id="info">
+            
+        </div>
         <script src="index.js"></script>
     </body>
 </html>

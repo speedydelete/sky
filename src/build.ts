@@ -25,11 +25,11 @@ let compiler = webpack({
                 options: {
                     presets: ['@babel/preset-env'],
                     targets: {
-                        chrome: '56',
-                        edge: '79',
-                        safari: '15',
+                        chrome: '57',
+                        edge: '16',
+                        safari: '10.1',
                         firefox: '54',
-                        opera: '43',
+                        opera: '44',
                     },
                 },
             }
