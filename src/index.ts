@@ -39,10 +39,10 @@ while (objects.length < length) {
     let b = view.getUint8(index + 34);
     let length = view.getUint8(index + 35);
     let name = '';
+    index += 36;
     for (let i = 0; i < length; i++) {
         name += String.fromCharCode(view.getUint8(index++));
     }
-    index = index + 36 + name.length;
     objects.push({id, name, ra, dec, pmRa, pmDec, rvel, dist, mag, color: [r, g, b]});
 }
 
@@ -62,6 +62,10 @@ let ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
 
 function render(): void {
+    if (inInfo) {
+        requestAnimationFrame(render);
+        return;
+    }
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     let scale = height * zoom / 360;
@@ -88,15 +92,25 @@ function render(): void {
         ctx.arc(x, y, radius * 2, 0, 2 * PI);
         ctx.fill();
     }
-    query('#ra').textContent = `${format(cRa / 15, 0, 2)}:${format(cRa * 4, 0, 2)}:${format(cRa * 240, 0, 2)}`;
+    query('#ra').textContent = `${format(cRa / 15, 0, 2)}:${format(cRa * 4 % 60, 0, 2)}:${format(cRa * 240 % 60, 0, 2)}`;
     query('#dec').textContent = format(cDec, 3);
     requestAnimationFrame(render);
 }
 
 requestAnimationFrame(render);
 
+window.addEventListener('resize', () => {
+    width = canvas.width = window.innerWidth;
+    height = canvas.height = window.innerHeight;
+});
+
+
+let inInfo = false;
 
 window.addEventListener('wheel', event => {
+    if (inInfo) {
+        return;
+    }
     zoom -= zoom / 1000 * event.deltaY;
     if (zoom < 1) {
         zoom = 1;
@@ -104,7 +118,9 @@ window.addEventListener('wheel', event => {
 })
 
 window.addEventListener('keydown', event => {
-    if (event.key === 'w') {
+    if (inInfo) {
+        return;
+    } else if (event.key === 'w') {
         cDec += 2 / zoom;
         if (cDec > 90) {
             cDec = 90;
@@ -147,6 +163,9 @@ let dragStartRa = 0;
 let dragStartDec = 0;
 
 canvas.addEventListener('mousedown', event => {
+    if (inInfo) {
+        return;
+    }
     isDragging = true;
     dragStartX = event.clientX;
     dragStartY = event.clientY;
@@ -166,3 +185,19 @@ canvas.addEventListener('mousemove', event => {
 
 canvas.addEventListener('mouseup', () => isDragging = false);
 canvas.addEventListener('mouseleave', () => isDragging = false);
+
+
+let infoButton = query('#info-button');
+let info = query('#info');
+infoButton.addEventListener('click', () => {
+    if (inInfo) {
+        inInfo = false;
+        infoButton.textContent = 'Info';
+        info.style.display = 'none';
+    } else {
+        inInfo = true;
+        isDragging = false;
+        infoButton.textContent = 'Back';
+        info.style.display = 'flex';
+    }
+});

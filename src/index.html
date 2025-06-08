@@ -7,6 +7,8 @@
         <style>
 
 body {
+    background-color: black;
+    color: white;
     font-family: 'Courier New', Courier, monospace;
     margin: 0;
 }
@@ -14,9 +16,16 @@ body {
 canvas {
     position: absolute;
     top: 0;
-    bottom: 30px;
+    bottom: 0;
     left: 0;
     right: 0;
+}
+
+button {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: inherit;
+    background-color: #3f3f3f;
+    color: white;
 }
 
 #bottom {
@@ -30,8 +39,41 @@ canvas {
     flex-direction: row;
     align-items: center;
     gap: 20px;
-    background-color: #3f3f3f;
+    background-color: transparent;
+}
+
+#info-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    border: none;
+    border-bottom: 1px solid white;
+    border-right: 1px solid white;
+    border-bottom-right-radius: 5px;
+}
+
+#info {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    background-color: black;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#info > div {
+    max-width: max(500px, min(50%, 1000px));
+    padding: 50px 0;
+}
+
+#info h1 {
     color: white;
+    text-align: center;
 }
 
         </style>
@@ -46,7 +88,10 @@ canvas {
         </div>
         <button id="info-button">Info</button>
         <div id="info">
-            
+            <div>
+                <h1>Sky</h1>
+                This is a sky map program. Its GitHub is <a href="https://github.com/speedydelete/sky">here</a>. License information and source code can be found there.
+            </div>
         </div>
         <script src="index.js"></script>
     </body>
