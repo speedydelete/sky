@@ -2,35 +2,35 @@
 import {readFileSync, writeFileSync} from 'fs';
 
 const GREEK_LETERS = 'εζηθικλμνξοπρστυφχψω';
-const LETTERS = Array.from('AbcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ').map(x => new RegExp('(?<![a-zA-Z])' + x + ' '));
+const LETTERS = [].concat(
+    Array.from('bcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),
+    ['RR', 'RS', 'RT', 'RU', 'RV', 'RW', 'RX', 'RY', 'RZ', 'SS', 'ST', 'SU', 'SV', 'SW', 'SX', 'SY', 'SZ', 'TT', 'TU', 'TV', 'TW', 'TX', 'TY', 'TZ', 'UU', 'UV', 'UW', 'UX', 'UY', 'UZ', 'VV', 'VW', 'VX', 'VY', 'VZ', 'WW', 'WX', 'WY', 'WZ', 'XX', 'XY', 'XZ', 'YY', 'YZ', 'ZZ'],
+    Array.from('ABCDEFGHIKLMNOPQ').flatMap((x, i) => Array.from('ABCDEFGHIKLMNOPQRSTUVWYZ'.slice(i)).map(y => x + y)),
+).map(x => new RegExp('^' + x + ' '));
 
 let cs = Object.keys(JSON.parse(readFileSync('constellations.json').toString()));
 
 let stars = readFileSync('objects.json.temp').toString().split('\n').slice(20, -2);
 
-let hd = [];
-let cs2 = Object.fromEntries(cs.map(x => [x, []]));
+let out = Object.fromEntries(cs.map(x => [x, []]));
 let other = [];
 
 for (let star of stars) {
     if (star.startsWith('HD ')) {
-        hd.push(star);
-    } else {
-        let found = false;
-        for (let c of cs) {
-            if (star.includes(c)) {
-                cs2[c].push(star);
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            other.push(star);
+        continue;
+    }
+    let found = false;
+    for (let c of cs) {
+        if (star.includes(c)) {
+            out[c].push(star);
+            found = true;
+            break;
         }
     }
+    if (!found) {
+        other.push(star);
+    }
 }
-
-hd = hd.sort((x, y) => parseInt(x.slice(3)) - parseInt(y.slice(3)));
 
 function starOrder(x) {
     x = x.split(',')[0];
@@ -44,9 +44,14 @@ function starOrder(x) {
             return i + GREEK_LETERS.length;
         }
     }
+    if (x.match(/^V\d+/)) {
+        return LETTERS.length + GREEK_LETERS.length + parseInt(x.slice(1));
+    }
+    if (x.match(/^\d+/)) {
+        return 100000 + parseInt(x);
+    }
     return LETTERS.length + GREEK_LETERS.length;
 }
 
-writeFileSync('hd.csv', hd.join('\n'));
-writeFileSync('star.csv.temp', [].concat(...Object.values(cs2).map(x => x.sort((a, b) => starOrder(a) - starOrder(b)))).join('\n'));
-writeFileSync('other.csv.temp', other.join('\n'));
+writeFileSync('star.csv.temp', Object.values(out).map(x => x.sort((a, b) => starOrder(a) - starOrder(b)).join('\n') + '\n').join('\n'));
+writeFileSync('other.csv.temp', other.sort().join('\n'));
