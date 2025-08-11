@@ -1,3 +1,5 @@
+# The license in the LICENSE file does not apply to this file. The data in this file is from SIMBAD (http://simbad.cds.unistra.fr/simbad/). This file is made available under the Open Database License: http://opendatacommons.org/licenses/odbl/1.0/. Any rights in individual contents of the database are licensed under the Database Contents License: http://opendatacommons.org/licenses/dbcl/1.0/.
+id,otype,ra,dec,pmra,pmdec,rvz,plx,type,mag,extra
 HD 1,SB*,1.28683560187,67.83999458374,7.48,-5.045,-27.33,2.668,G9-K0IIIa,7.42
 HD 2,PM*,1.2748040687099997,57.770334610759996,33.695,73.868,null,9.3197,F5,8.21
 HD 3,*,1.2906594526400004,45.229030775610006,-27.768,-20.062,-10.52,6.3137,A0Vn_lB,6.71
