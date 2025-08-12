@@ -8,6 +8,5 @@
         "resolveJsonModule": true,
         "esModuleInterop": true,
         "sourceMap": true
-    },
-    "files": ["src/index.ts", "src/build.ts", "src/loader.ts"]
+    }
 }
