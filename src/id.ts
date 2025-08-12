@@ -26,20 +26,20 @@ export const VARIABLE_LETTERS = ([] as string[]).concat(
 );
 export type VariableLetter = 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z' | `${CapitalLetter}${CapitalLetter}` | `V${number}`;
 
-export interface ParsedStarID {
+export interface ParsedStarID<T extends Constellation = Constellation> {
     type: 'star';
-    cs: Constellation;
+    cs: T;
     id: BayerLetter | VariableLetter | `${number}`;
     power: number;
-    letter: AllCapitalLetter;
+    letter: '' | AllCapitalLetter;
 }
 
 export const CATALOGS = ['HD'] as const;
 export type Catalog = (typeof CATALOGS)[number];
 
-export interface ParsedCatalogID {
+export interface ParsedCatalogID<T extends Catalog = Catalog> {
     type: 'catalog';
-    catalog: Catalog;
+    catalog: T;
     number: number;
 }
 
@@ -50,36 +50,26 @@ export type MinorPlanetNumber = CapitalLetter | `${CapitalLetter}${number}`;
 
 export interface ParsedMinorPlanetID {
     type: 'mp';
+    mpNumber?: number;
     year: number;
     halfMonth: HalfMonth;
     number: MinorPlanetNumber;
 }
 
-export interface ParsedNamedMinorPlanetID {
-    type: 'nmp';
-    number: number;
-    name: string;
-}
+export type CometPrefix = 'p' | 'c' | 'd' | 'x' | 'i';
+export type NamedCometPrefix = 'p' | 'i';
 
-const COMET_PREFIXES = ['p', 'c', 'd', 'x', 'i'] as const;
-export type CometPrefix = (typeof COMET_PREFIXES)[keyof typeof COMET_PREFIXES];
-
-export interface ParsedCometID {
-    type: CometPrefix;
+export interface ParsedCometID<T extends CometPrefix = CometPrefix> {
+    type: T;
     prefixNumber?: number;
     year: number;
     halfMonth: HalfMonth;
     number: number;
 }
 
-export interface ParsedNamedCometID {
-    type: 'p' | 'i';
-    number: number;
-    name: string;
-}
-
-const PLANET_LETTERS = ['h', 'v', 'e', 'm', 'j', 's', 'u', 'n'] as const;
-export type PlanetLetter = Capitalize<(typeof PLANET_LETTERS)[number]>;
+export const PLANET_LETTERS = ['H', 'V', 'E', 'M', 'J', 'S', 'U', 'N'] as const;
+export const LOWERCASE_PLANET_LETTERS = ['h', 'v', 'e', 'm', 'j', 's', 'u', 'n'] as const;
+export type PlanetLetter = (typeof PLANET_LETTERS)[number];
 export type SatelliteParent = PlanetLetter | number | ParsedMinorPlanetID;
 
 export interface ParsedSatelliteID {
@@ -91,7 +81,7 @@ export interface ParsedSatelliteID {
 
 const SLASH_PREFIXES = 'pcdxis';
 
-const SPECIALS = ['sun', 'moon', 'mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'] as const;
+export const SPECIALS = ['sun', 'moon', 'mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'] as const;
 export type Special = Capitalize<(typeof SPECIALS)[number]>;
 
 export interface ParsedSpecialID {
@@ -104,7 +94,8 @@ export interface ParsedNameID {
     name: string;
 }
 
-export type ParsedID = ParsedStarID | ParsedCatalogID | ParsedMinorPlanetID | ParsedNamedMinorPlanetID | ParsedCometID | ParsedNamedCometID | ParsedSatelliteID | ParsedSpecialID | ParsedNameID;
+export type ParsedID = ParsedStarID | ParsedCatalogID | ParsedMinorPlanetID | ParsedCometID | ParsedSatelliteID | ParsedSpecialID | ParsedNameID;
+
 
 let logParsingErrors = true;
 export function enableParsingErrorLogging(): void {
@@ -122,7 +113,99 @@ function log(msg: string): void {
     }
 }
 
-function parseSlashed(id: string, prefixNumber?: number): ParsedSatelliteID | ParsedCometID | ParsedNamedCometID | ParsedNameID | undefined {
+let genitives: {[key: string]: Constellation} | null = null;
+
+function parseStar(parts: string[]): ParsedStarID | undefined {
+    if (parts.length > 3) {
+        return undefined;
+    }
+    let cs = parts[1] as Constellation;
+    if (!(cs in CONSTELLATIONS)) {
+        if (genitives === null) {
+            genitives = Object.fromEntries(Object.entries(CONSTELLATIONS).map(x => [x[1][0], x[0] as Constellation]));
+        }
+        if (cs in genitives) {
+            cs = genitives[cs];
+        } else {
+            log(`parseStar failed (invalid genitive: '${cs}')`);
+            return;
+        }
+    }
+    let letter: ParsedStarID['letter'] = '';
+    if (parts.length === 3) {
+        if (ALL_CAPITAL_LETTERS.includes(parts[2])) {
+            letter = parts[2];
+        } else {
+            return;
+        }
+    }
+    let power = 1;
+    let id: ParsedStarID['id'];
+    let flamsteed = parseInt(parts[0]);
+    if (!Number.isNaN(flamsteed)) {
+        id = parts[0] as `${number}`;
+    } else {
+        let letter = parts[0];
+        if (letter.includes('^')) {
+            let parts = letter.split('^');
+            if (parts.length !== 2) {
+                log(`parseStar failed (expected less than 2 carets, got ${parts.length})`);
+                return;
+            }
+            letter = parts[0];
+            let parsed = parseInt(parts[1]);
+            power = parsed;
+        } else if ('0123456789'.includes(letter[1])) {
+            power = parseInt(letter.slice(1));
+            letter = letter[0];
+        }
+        if (BAYER_LETTERS.includes(letter)) {
+            id = letter;
+        } else if (VARIABLE_LETTERS.includes(letter)) {
+            id = letter as VariableLetter;
+        } else if (letter[0] === 'V' && !Number.isNaN(parseInt(letter.slice(1)))) {
+            id = letter as VariableLetter;
+        } else {
+            log(`parseStar failed (invalid letter: '${letter}')`);
+            return;
+        }
+    }
+    if (Number.isNaN(power)) {
+        return;
+    }
+    return {type: 'star', cs, id, power, letter};
+}
+
+function parseMinorPlanet(id: string, year: number): ParsedMinorPlanetID | undefined {
+    let mpNumber: number | undefined = undefined;
+    let secondNum = parseInt(id.slice(1));
+    if (!Number.isNaN(secondNum)) {
+        id = id.slice(1 + secondNum.toString().length);
+        mpNumber = year;
+        year = secondNum;
+    }
+    if (!HALF_MONTHS.includes(id[1])) {
+        log(`parseMinorPlanet failed (invalid half-month: '${id[1]}')`);
+        return;
+    }
+    if (!CAPITAL_LETTERS.includes(id[2])) {
+        log(`parseMinorPlanet failed (invalid capital letter: '${id[1]}')`);
+        return;
+    }
+    if (id.length > 2) {
+        if (Number.isNaN(parseInt(id.slice(2)))) {
+            log(`parseMinorPlanet failed (invalid number: '${id.slice(2)}')`);
+            return;
+        }
+    }
+    if (HALF_MONTHS.includes(id[1]) && CAPITAL_LETTERS.includes(id[2]) && (id.length >= 3 ? !Number.isNaN(parseInt(id[3])) : true)) {
+        let halfMonth = id[1];
+        let number = id.slice(3) as MinorPlanetNumber;
+        return {type: 'mp', year, halfMonth, number, mpNumber};
+    }
+}
+
+function parseSlashed(id: string, prefixNumber?: number): ParsedSatelliteID | ParsedCometID | ParsedNameID | undefined {
     let type = id[0] as 'p' | 'c' | 'd' | 'x' | 'i' | 's';
     if (!SLASH_PREFIXES.includes(type)) {
         log(`parseSlashed failed (invalid prefix: '${type}')`);
@@ -142,7 +225,10 @@ function parseSlashed(id: string, prefixNumber?: number): ParsedSatelliteID | Pa
         let parentStr = rest.slice(0, -1).join(' ');
         let number = parseInt(rest[1]);
         let parent: SatelliteParent;
-        if (PLANET_LETTERS.includes(parentStr)) {
+        if (parentStr === 'P') {
+            parentStr = '134340';
+        }
+        if (LOWERCASE_PLANET_LETTERS.includes(parentStr)) {
             parent = parentStr.toUpperCase() as Uppercase<typeof parentStr>;
         } else {
             if (parentStr.startsWith('(') && parentStr.endsWith(')')) {
@@ -180,71 +266,18 @@ function parseSlashed(id: string, prefixNumber?: number): ParsedSatelliteID | Pa
     }
 }
 
-let genitives: {[key: string]: Constellation} | null = null;
-
-function parseStar(parts: string[]): ParsedStarID | undefined {
-    if (parts.length > 3) {
-        return undefined;
-    }
-    let cs = parts[1] as Constellation;
-    if (!(cs in CONSTELLATIONS)) {
-        if (genitives === null) {
-            genitives = Object.fromEntries(Object.entries(CONSTELLATIONS).map(x => [x[1][0], x[0] as Constellation]));
-        }
-        if (cs in genitives) {
-            cs = genitives[cs];
-        } else {
-            log(`parseStar failed (invalid genitive: '${cs}')`);
-            return;
-        }
-    }
-    let letter: AllCapitalLetter = 'A';
-    if (parts.length === 3) {
-        if (ALL_CAPITAL_LETTERS.includes(parts[2])) {
-            letter = parts[2];
-        } else {
-            return;
-        }
-    }
-    let power = 1;
-    let id: ParsedStarID['id'];
-    let flamsteed = parseInt(parts[0]);
-    if (!Number.isNaN(flamsteed)) {
-        id = parts[0] as `${number}`;
-    } else {
-        let letter = parts[0];
-        if (letter.includes('^')) {
-            let parts = letter.split('^');
-            if (parts.length !== 2) {
-                log(`parseStar failed (expected less than 2 carets, got ${parts.length})`);
-                return;
-            }
-            letter = parts[0];
-            let parsed = parseInt(parts[1]);
-            power = parsed;
-        } else if ('0123456789'.includes(letter[1])) {
-            power = parseInt(letter.slice(1));
-            letter = letter[0];
-        }
-        if (BAYER_LETTERS.includes(letter)) {
-            id = letter;
-        } else if (VARIABLE_LETTERS.includes(letter)) {
-            id = letter as VariableLetter;
-        } else if (letter[0] === 'V' && !Number.isNaN(parseInt(letter.slice(1)))) {
-            id = letter as VariableLetter;
-        } else {
-            log(`parseStar failed (invalid letter: ${letter})`);
-            return;
-        }
-    }
-    if (Number.isNaN(power)) {
-        return;
-    }
-    return {type: 'star', cs, id, power, letter};
-}
-
 export function parseID(id: string): ParsedID {
     id = id.toLowerCase().trim();
+    if (id[0] === '(') {
+        let index = id.indexOf(')');
+        if (index === -1) {
+            return {type: 'name', name: id};
+        }
+        id = id.slice(1, index) + id.slice(index + 1);
+    }
+    while (id.includes('  ')) {
+        id = id.replaceAll('  ', ' ');
+    }
     if (id === 'sun' || id === 'moon' || id === 'mercury' || id === 'venus' || id === 'earth' || id === 'mars' || id === 'jupiter' || id === 'saturn' || id === 'uranus' || id === 'neptune') {
         return {type: 'special', name: (id[0].toUpperCase() + id.slice(1)) as Special};
     } else if ('0123456789'.includes(id[0])) {
@@ -256,11 +289,9 @@ export function parseID(id: string): ParsedID {
                 return out;
             }
         } else if (id[0] === ' ') {
-            if (HALF_MONTHS.includes(id[1]) && CAPITAL_LETTERS.includes(id[2]) && (id.length >= 3 ? !Number.isNaN(parseInt(id[3])) : true)) {
-                let year = firstNum;
-                let halfMonth = id[1];
-                let number = id.slice(3) as MinorPlanetNumber;
-                return {type: 'mp', year, halfMonth, number};
+            let out = parseMinorPlanet(id, firstNum);
+            if (out) {
+                return out;
             }
         } else {
             let out = parseStar(id.split(' '));
@@ -291,4 +322,173 @@ export function parseID(id: string): ParsedID {
         }
     }
     return {type: 'name', name: id};
+}
+
+
+export type SortedParsedStarIDS = {[K in Constellation]: ParsedStarID<K>[]};
+
+export function sortParsedStarIDS(ids: ParsedStarID[]): SortedParsedStarIDS {
+    let out = Object.fromEntries((Object.keys(CONSTELLATIONS) as Constellation[]).map(x => [x, [] as ParsedStarID[]])) as SortedParsedStarIDS;
+    for (let id of ids) {
+        out[id.cs].push(id as any);
+    }
+    for (let key in out) {
+        out[key as Constellation].sort((a, b) => {
+            if (a.id === b.id) {
+                if (a.power === b.power) {
+                    if (a.letter === b.letter) {
+                        return 0;
+                    } else {
+                        return a.letter.charCodeAt(0) - b.letter.charCodeAt(0);
+                    }
+                } else {
+                    return a.power - b.power;
+                }
+            } else if (BAYER_LETTERS.includes(a.id)) {
+                if (BAYER_LETTERS.includes(b.id)) {
+                    return BAYER_LETTERS.indexOf(a.id) - BAYER_LETTERS.indexOf(b.id);
+                } else {
+                    return 1;
+                }
+            } else if (VARIABLE_LETTERS.includes(a.id)) {
+                if (BAYER_LETTERS.includes(b.id)) {
+                    return -1;
+                } else if (VARIABLE_LETTERS.includes(b.id)) {
+                    return VARIABLE_LETTERS.indexOf(a.id) - VARIABLE_LETTERS.indexOf(b.id);
+                } else {
+                    return 1;
+                }
+            } else {
+                if (b.id[0] === 'V' && '0123456789'.includes(b.id[1])) {
+                    return parseInt(a.id.slice(1)) - parseInt(b.id.slice(1));
+                } else {
+                    return -1;
+                }
+            }
+        });
+    }
+    return out;
+}
+
+export interface SortedParsedIDS {
+    special: ParsedSpecialID[];
+    star: SortedParsedStarIDS;
+    catalog: {[K in Catalog]: ParsedCatalogID<K>[]};
+    mp: ParsedMinorPlanetID[];
+    p: ParsedCometID<'p'>[];
+    c: ParsedCometID<'c'>[];
+    d: ParsedCometID<'d'>[];
+    x: ParsedCometID<'x'>[];
+    i: ParsedCometID<'i'>[];
+    s: ParsedSatelliteID[];
+    name: ParsedNameID[];
+}
+
+function minorPlanetSorter(a: ParsedMinorPlanetID, b: ParsedMinorPlanetID): number {
+    if (a.mpNumber) {
+        if (b.mpNumber) {
+            return a.mpNumber - b.mpNumber;
+        } else {
+            return -1;
+        }
+    }
+    if (a.year === b.year) {
+        if (a.halfMonth === b.halfMonth) {
+            if (a.number === b.number) {
+                return 0;
+            } else {
+                let an = parseInt(a.number.slice(1));
+                if (Number.isNaN(an)) {
+                    an = 0;
+                }
+                let bn = parseInt(b.number.slice(1));
+                if (Number.isNaN(bn)) {
+                    bn = 0;
+                }
+                if (an === bn) {
+                    return a.number[0].charCodeAt(0) - b.number[0].charCodeAt(0);
+                } else {
+                    return an - bn;
+                }
+            }
+        } else {
+            return a.halfMonth.charCodeAt(0) - b.halfMonth.charCodeAt(0);
+        }
+    } else {
+        return a.year - b.year;
+    }
+}
+
+function cometSorter(a: ParsedCometID, b: ParsedCometID): number {
+    if (a.year === b.year) {
+        if (a.halfMonth === b.halfMonth) {
+            return a.number - b.number;
+        } else {
+            return a.halfMonth.charCodeAt(0) - b.halfMonth.charCodeAt(0);
+        }
+    } else {
+        return a.year - b.year;
+    }
+}
+
+function satelliteSorter(a: ParsedSatelliteID, b: ParsedSatelliteID): number {
+    if (a.parent !== b.parent) {
+        if (typeof a.parent === 'string') {
+            if (typeof b.parent === 'string') {
+                return PLANET_LETTERS.indexOf(a.parent) - PLANET_LETTERS.indexOf(b.parent);
+            } else {
+                return -1;
+            }
+        } else if (typeof a.parent === 'number') {
+            if (typeof b.parent === 'string') {
+                return 1;
+            } else if (typeof b.parent === 'number') {
+                return b.parent - a.parent;
+            } else {
+                return -1;
+            }
+        } else {
+            if (typeof b.parent === 'object') {
+                let out = minorPlanetSorter(a.parent, b.parent);
+                if (out !== 0) {
+                    return out;
+                }
+            } else {
+                return 1;
+            }
+        }
+    }
+    if (a.year === b.year) {
+        return a.number - b.number;
+    } else {
+        return a.year - b.year;
+    }
+}
+
+export function sortParsedIDS(ids: ParsedID[]): SortedParsedIDS {
+    let star: ParsedStarID[] = [];
+    let out = {special: [], star: {}, catalog: Object.fromEntries(CATALOGS.map(x => [x, [] as ParsedCatalogID[]])), mp: [], p: [], c: [], d: [], x: [], i: [], s: [], name: []} as unknown as SortedParsedIDS;
+    for (let id of ids) {
+        if (id.type === 'star') {
+            star.push(id);
+        } else if (id.type === 'catalog') {
+            out.catalog[id.catalog].push(id);
+        } else {
+            out[id.type].push(id as any);
+        }
+    }
+    out.special.sort((a, b) => a.name === b.name ? 0 : (a.name > b.name ? 1 : -1));
+    out.star = sortParsedStarIDS(star);
+    for (let key in out.catalog) {
+        out.catalog[key as Catalog].sort((a, b) => a.number - b.number);
+    }
+    out.mp.sort(minorPlanetSorter);
+    out.p.sort(cometSorter);
+    out.c.sort(cometSorter);
+    out.d.sort(cometSorter);
+    out.x.sort(cometSorter);
+    out.i.sort(cometSorter);
+    out.s.sort(satelliteSorter);
+    out.name.sort();
+    return out;
 }
