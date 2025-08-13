@@ -25,8 +25,10 @@ export const LAMBDA = 1.089e-52;
 export const SBC = (PI**2 * KB**4) / (60 * HBAR**3 * C**2);
 
 export const AU = 149597870700;
-export const LY = 9460730472580800;
+export const LY = 9460730472580.8e3;
 export const PARSEC = 648000 * AU / PI;
+export const LY_TO_PARSEC = PARSEC / LY;
+export const H0 = 0.07039;
 
 
 export const GREEK_LETTERS: {[key: string]: string} = {'alf': 'α', 'bet': 'β', 'gam': 'γ', 'del': 'δ', 'eps': 'ε', 'zet': 'ζ', 'eta': 'η', 'tet': 'θ', 'iot': 'ι', 'kap': 'κ', 'lam': 'λ', 'mu.': 'µ', 'nu.': 'ν ', 'ksi': 'ξ', 'omi': 'o', 'pi.': 'π', 'rho': 'ρ', 'sig': 'σ', 'tau': 'τ', 'ups': 'υ', 'phi': 'φ', 'khi': 'χ', 'psi': 'ψ', 'ome': 'ω'};
@@ -167,6 +169,12 @@ export function format(value: number, digits: number = 0, length: number = 0) {
 }
 
 
+export interface CoordsLike {
+    ra: number;
+    dec: number;
+    dist: number;
+}
+
 export class Coords {
 
     ra: number;
@@ -198,6 +206,12 @@ export class Coords {
 
 }
 
+
+export interface Vector3Like {
+    x: number;
+    y: number;
+    z: number;
+}
 
 export class Vector3 {
 
