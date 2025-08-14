@@ -1,5 +1,5 @@
 
-import {LY_TO_PARSEC, H0, C, CoordsLike, Vector3Like} from './util.js';
+import {LY_TO_PARSEC, H0, C, Coords, Vector3, J2000} from './util.js';
 
 
 export type DeepObjType = 'star';
@@ -15,8 +15,11 @@ export abstract class BaseObj {
     notes?: string;
     internalNotes?: string;
 
-    abstract getCoords(time: number): CoordsLike;
-    abstract getXYZ(time: number): Vector3Like;
+    abstract getCoords(time: number): Coords;
+    
+    getXYZ(time: number): Vector3 {
+        return Coords.prototype.toVector3.call(this.getCoords(time));
+    }
 
 }
 
@@ -25,14 +28,20 @@ export abstract class DeepObj extends BaseObj {
 
     abstract type: DeepObjType;
 
-    ra: number | null = null;
-    dec: number | null = null;
+    ra: number;
+    dec: number;
     pmra: number | null = null;
     pmdec: number | null = null;
     rvz: number | null = null;
     dist: number | null = null;
     plx: number | null = null;
     z: number | null = null;
+
+    constructor(ra: number, dec: number) {
+        super();
+        this.ra = ra;
+        this.dec = dec;
+    }
 
     initDistanceValues() {
         if (this.dist !== null) {
@@ -49,12 +58,12 @@ export abstract class DeepObj extends BaseObj {
         }
     }
 
-    getCoords(time: number): CoordsLike {
-
-    }
-
-    getXYZ(time: number): Vector3Like {
-
+    getCoords(time: number): Coords {
+        return new Coords(
+            this.ra + (time - J2000) * (this.pmra ? this.pmra / 3600000 : 0),
+            this.dec + (time - J2000) * (this.pmdec ? this.pmdec / 3600000 : 0),
+            this.dist === null ? null : this.dist + (time - J2000) * (this.rvz ? this.rvz / (C / 1000) : 0),
+        );
     }
 
 }

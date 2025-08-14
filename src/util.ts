@@ -1,4 +1,7 @@
 
+export const IS_BROWSER = typeof window === 'object' && window.window === window && window === globalThis;
+
+
 export type Color = [number, number, number];
 
 export const {E, LN10, LN2, LOG10E, LOG2E, PI, SQRT1_2, SQRT2, abs, cbrt, ceil, clz32, exp, expm1, floor, fround, hypot, imul, log, log10, log1p, log2, max, min, pow, sign, sqrt} = globalThis.Math;
@@ -125,16 +128,30 @@ export const CONSTELLATIONS = {
 };
 
 
-export function toJD(time: number): number {
+const LEAP_SECONDS = [63072000, 78796800, 94694400, 126230400, 157766400, 189302400, 220924800, 252460800, 283996800, 315532800, 362793600, 394329600, 425865600, 489024000, 567993600, 631152000, 662688000, 709948800, 741484800, 773020800, 820454400, 867715200, 915148800, 1136073600, 1230768000, 1341100800, 1435708800,1483228800];
+
+export function unixToTime(unix: number): number {
+    return unix - LEAP_SECONDS.findLastIndex(ls => unix > ls) + 1;
+}
+
+export function timeToJD(time: number): number {
     return (time / 86400) + 2440587.5;
 }
 
-export function toUnix(jd: number): number {
+export function jdToTime(jd: number): number {
     return (jd - 2440587.5) * 86400;
 }
 
 export const J2000_JD = 2451545.0;
-export const J2000 = toUnix(J2000_JD);
+export const J2000 = jdToTime(J2000_JD);
+
+export function timeToT(time: number): number {
+    return (time - J2000) / 365.25 / 86400;
+}
+
+export function jdToT(jd: number): number {
+    return (jd - J2000_JD) / 36525;
+}
 
 
 export function normalizeAngle(angle: number): number {
@@ -169,19 +186,13 @@ export function format(value: number, digits: number = 0, length: number = 0) {
 }
 
 
-export interface CoordsLike {
-    ra: number;
-    dec: number;
-    dist: number;
-}
-
 export class Coords {
 
     ra: number;
     dec: number;
-    dist: number;
+    dist: number | null;
 
-    constructor(ra: number, dec: number, dist: number = 0) {
+    constructor(ra: number, dec: number, dist: number | null = null) {
         this.ra = normalizeAngle(ra);
         this.dec = normalizeDec(dec);
         this.dist = dist;
@@ -193,10 +204,11 @@ export class Coords {
     }
     
     toVector3(): Vector3 {
+        let dist = this.dist ?? 1;
         return new Vector3(
-            this.dist * sin(this.dec) * cos(this.ra),
-            this.dist * sin(this.dec) * sin(this.ra),
-            this.dist * cos(this.dec),
+            dist * sin(this.dec) * cos(this.ra),
+            dist * sin(this.dec) * sin(this.ra),
+            dist * cos(this.dec),
         );
     }
 
@@ -206,12 +218,6 @@ export class Coords {
 
 }
 
-
-export interface Vector3Like {
-    x: number;
-    y: number;
-    z: number;
-}
 
 export class Vector3 {
 
